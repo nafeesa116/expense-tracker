@@ -1,0 +1,78 @@
+#include<iostream>
+using namespace std;
+
+struct Product {
+    string name;
+    int quantity;
+    double price;
+    double totalPrice;
+    Product* next;
+
+    Product(const string& n, int q, double p) : name(n), quantity(q), price(p), next(NULL) {}
+};
+
+class ShoppingCart {
+private:
+    Product* head;
+
+public:
+    ShoppingCart() : head(NULL) {}
+
+    void addProduct(const string& name, int quantity, double price) {
+        Product* newProduct = new Product(name, quantity, price);
+        newProduct->totalPrice = newProduct->price * newProduct->quantity;
+        newProduct->next = head;
+        head = newProduct;
+    }
+
+    void displayProducts() const {
+        Product* temp = head;
+        while (temp) {
+            cout << temp->name << " | Qty: " << temp->quantity << " | Price of one quantity: Rs." << temp->price << " | Total Price: Rs." << temp->totalPrice << endl;
+            temp = temp->next;
+        }
+    }
+
+    Product* findMostExpensiveProduct() const {
+        Product* temp = head;
+        Product* maxProduct = NULL;
+        double maxPrice = 0.0;
+        while (temp) {
+            if (temp->totalPrice > maxPrice) {
+                maxPrice = temp->totalPrice;
+                maxProduct = temp;
+            }
+            temp = temp->next;
+        }
+        return maxProduct;
+    }
+
+    Product* getHead() const {
+        return head;
+    }
+
+    ~ShoppingCart() {
+        while (head) {
+            Product* temp = head;
+            head = head->next;
+            delete temp;
+        }
+    }
+};
+
+int main() {
+    ShoppingCart cart;
+
+    cart.addProduct("Apple", 10, 30);
+    cart.addProduct("Mango", 5, 50);
+    cart.addProduct("juice", 9, 440);
+    cart.addProduct("creme", 1, 200);
+    cart.addProduct("Nachos", 89,590);
+
+    cart.displayProducts();
+
+    Product* temp = cart.findMostExpensiveProduct();
+    cout << "MOST EXPENSIVE PRODUCT: " << temp->name << " | Qty: " << temp->quantity << " | Price: Rs." << temp->price << endl;
+
+    return 0;
+}
